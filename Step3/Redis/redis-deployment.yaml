@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: redis-my-server
+  name: redis-my-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-my-server
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: redis-my-server
+    spec:
+      containers:
+      - image: redis:alpine
+        imagePullPolicy: IfNotPresent
+        name: redis-container
+        resources: {}
+        ports:
+          - containerPort: 6379
+        volumeMounts:
+          - mountPath: ./config.yaml
+            subPath: config.yaml
+            name: redis-config-map
+            readOnly: true
+      volumes:
+        - name: redis-config-map
+          configMap:
+            name: redis-server-config
+        - name: redis-persistant-volume-claim
+          persistentVolumeClaim:
+            claimName: pv-volume-claim
+status: {}
